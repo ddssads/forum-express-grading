@@ -118,6 +118,25 @@ const adminController = {
       .then(users => {
         return res.render('admin/users', { users: users })
       })
+  },
+  toggleAdmin: (req, res) => {
+    return User.findByPk(req.params.id).then(user => {
+      if (user.isAdmin) {
+        return user.update({
+          isAdmin: false
+        }).then((user) => {
+          req.flash('success_messages', `${user.name} was successfully change to user`)
+          res.redirect('/admin/users')
+        })
+      } else {
+        return user.update({
+          isAdmin: true
+        }).then(() => {
+          req.flash('success_messages', `${user.name} was successfully change to admin`)
+          res.redirect('/admin/users')
+        })
+      }
+    })
   }
 }
 
