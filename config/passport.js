@@ -21,7 +21,7 @@ module.exports = app => {
           if (!isMatch) {
             return cb(null, false, req.flash('error_messages', '帳號或密碼不正確！'))
           }
-          return cb(null, user)
+          return cb(null, user, req.flash('success_messages', '登入成功！'))
         })
       })
     }

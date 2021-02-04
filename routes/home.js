@@ -1,14 +1,17 @@
 const express = require('express')
 const router = express.Router()
 const userController = require('../controllers/userController')
-const restController = require('../controllers/restController')
 const passport = require('passport')
 const auth = require('../middleware/auth')
 
 router.get('/', auth.authenticated, (req, res) => res.redirect('/restaurants'))
-router.get('/restaurants', auth.authenticated, restController.getRestaurants)
+router.get('/restaurants', auth.authenticated, (req, res) => {
+  return res.render('restaurants')
+})
 
-router.get('/signup', userController.signUpPage)
+router.get('/signup', (req, res) => {
+  return res.render('signup')
+})
 router.post('/signup', async (req, res) => {
   try {
     if (req.body.passwordCheck !== req.body.password) {
@@ -28,11 +31,20 @@ router.post('/signup', async (req, res) => {
   }
 })
 
-router.get('/signin', userController.signInpage)
+router.get('/signin', (req, res) => {
+  return res.render('signin')
+})
 router.post('/signin', passport.authenticate('local', {
+  successRedirect: '/restaurants',
   failureRedirect: '/signin',
+  successFlash: true,
   failureFlash: true
-}), userController.signIn)
-router.get('/logout', userController.logout)
+}))
+
+router.get('/logout', (req, res) => {
+  req.flash('success_messages', '成功登出！')
+  req.logout()
+  res.redirect('/signin')
+})
 
 module.exports = router

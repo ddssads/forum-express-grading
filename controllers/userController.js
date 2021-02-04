@@ -3,6 +3,7 @@ const db = require('../models')
 const User = db.User
 
 const userController = {
+  //檢查email是否已經註冊
   checkUser: async function (email) {
     try {
       const user = await User.findOne({ where: { email } })
@@ -11,9 +12,7 @@ const userController = {
       return console.log(e)
     }
   },
-  signUpPage: (req, res) => {
-    return res.render('signup')
-  },
+  //使用者註冊
   signUp: (name, email, password) => {
     return bcrypt.genSalt(10)
       .then(salt => bcrypt.hash(password, salt))
@@ -23,18 +22,6 @@ const userController = {
         password: hash
       }))
       .catch(err => console.log(err))
-  },
-  signInpage: (req, res) => {
-    return res.render('signin')
-  },
-  signIn: (req, res) => {
-    req.flash('success_messages', '成功登入！')
-    res.redirect('/restaurants')
-  },
-  logout: (req, res) => {
-    req.flash('success_messages', '成功登出！')
-    req.logout()
-    res.redirect('/signin')
   }
 }
 

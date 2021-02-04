@@ -1,48 +1,52 @@
 const fs = require('fs')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const db = require('../models')
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
 const Restaurant = db.Restaurant
 const User = db.User
 
 
 const adminController = {
+  //取得所有餐廳資料
   getRestaurants: async function () {
     const restaurants = await Restaurant.findAll({ raw: true, nest: true })
     return restaurants
   },
-  createRestaurant: (req, res) => {
-    return res.render('admin/create')
-  },
-  postRestaurant: (req) => {
-    const file = req.file
-    console.log(file)
+  //新增餐廳
+  postRestaurant: (file, body) => {
+    const { name, tel, address, opening_hours, description } = body
     if (file) {
-      console.log('@@@')
       imgur.setClientID(IMGUR_CLIENT_ID)
-      imgur.upload(file.path, (err, img) => {
-        return Restaurant.create({
-          name: req.body.name,
-          tel: req.body.tel,
-          address: req.body.address,
-          opening_hours: req.body.opening_hours,
-          description: req.body.description,
+      return imgur.upload(file.path, (err, img) => {
+        Restaurant.create({
+          name: name,
+          tel: tel,
+          address: address,
+          opening_hours: opening_hours,
+          description: description,
           image: file ? img.data.link : null,
-        }).catch(err => console.log(err))
+        })
+          .catch((err) => {
+            console.log(err)
+          })
       })
-    } else {
-      console.log('@@@@@nofile')
-      return Restaurant.create({
-        name: req.body.name,
-        tel: req.body.tel,
-        address: req.body.address,
-        opening_hours: req.body.opening_hours,
-        description: req.body.description,
-        image: null
-      })
-        .catch(err => console.log(err))
     }
+    return Restaurant.create({
+      name: name,
+      tel: tel,
+      address: address,
+      opening_hours: opening_hours,
+      description: description,
+      image: null
+    })
+      .catch(err => console.log(err))
   },
+  //取得單一餐廳資料
   getRestaurant: async function (id) {
     try {
       const restaurant = await Restaurant.findByPk(id, { raw: true })
@@ -51,49 +55,33 @@ const adminController = {
       console.log(e)
     }
   },
-  editRestaurant: async function (id) {
-    try {
-      const restaurant = await Restaurant.findByPk(id, { raw: true })
-      return restaurant
-    } catch (e) {
-      console.log(e)
-    }
-  },
-  putRestaurant: (req) => {
-    const { file } = req
+  //編輯單一餐廳資料
+  putRestaurant: async (file, body, id) => {
+    const { name, tel, address, opening_hours, description } = body
+    const restaurant = await Restaurant.findByPk(id)
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID);
-      imgur.upload(file.path, (err, img) => {
-        return Restaurant.findByPk(req.params.id)
-          .then((restaurant) => {
-            restaurant.update({
-              name: req.body.name,
-              tel: req.body.tel,
-              address: req.body.address,
-              opening_hours: req.body.opening_hours,
-              description: req.body.description,
-              image: file ? img.data.link : restaurant.image,
-            })
-              .catch((err) => {
-                console.log(err)
-              })
-          })
-      })
-    } else {
-      return Restaurant.findByPk(req.params.id).then(restaurant => {
+      return imgur.upload(file.path, (err, img) => {
         restaurant.update({
-          name: req.body.name,
-          tel: req.body.tel,
-          address: req.body.address,
-          opening_hours: req.body.opening_hours,
-          description: req.body.description,
-          image: restaurant.image
-        }).catch((err) => {
-          console.log(err)
+          name: name,
+          tel: tel,
+          address: address,
+          opening_hours: opening_hours,
+          description: description,
+          image: file ? img.data.link : restaurant.image
         })
       })
     }
+    return restaurant.update({
+      name: name,
+      tel: tel,
+      address: address,
+      opening_hours: opening_hours,
+      description: description,
+      image: restaurant.image
+    })
   },
+  //刪除單一餐廳
   deleteRestaurant: async function (id) {
     try {
       const restaurant = await Restaurant.findByPk(id)
@@ -102,6 +90,7 @@ const adminController = {
       console.log(e)
     }
   },
+  //取得所有用戶資料
   getUsers: async function () {
     try {
       const users = User.findAll({ raw: true, nest: true })
@@ -110,6 +99,7 @@ const adminController = {
       console.log(err)
     }
   },
+  //更改用戶權限
   toggleAdmin: async function (id) {
     try {
       const user = await User.findByPk(id)

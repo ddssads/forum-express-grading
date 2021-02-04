@@ -1,7 +1,5 @@
 const restController = {
-  getRestaurants: (req, res) => {
-    return res.render('restaurants')
-  }
+  //暫無
 }
 
 module.exports = restController
