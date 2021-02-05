@@ -6,11 +6,11 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const db = require('../models')
 const multer = require('multer')
+const { resolve } = require('path')
+const { rejects } = require('assert')
 const upload = multer({ dest: 'temp/' })
 const Restaurant = db.Restaurant
 const User = db.User
-
-
 const adminController = {
   //取得所有餐廳資料
   getRestaurants: async function () {
@@ -22,19 +22,31 @@ const adminController = {
     const { name, tel, address, opening_hours, description } = body
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
-      return imgur.upload(file.path, (err, img) => {
-        Restaurant.create({
-          name: name,
-          tel: tel,
-          address: address,
-          opening_hours: opening_hours,
-          description: description,
-          image: file ? img.data.link : null,
-        })
-          .catch((err) => {
-            console.log(err)
+      //將upload寫成promise物件處理非同步
+      const imgPromise = () => {
+        return new Promise((resolve, reject) => {
+          imgur.upload(file.path, (err, img) => {
+            return resolve(img.data.link)
           })
-      })
+        })
+      }
+      async function start() {
+        try {
+          let imgLink = await imgPromise()
+          console.log(imgLink)
+          Restaurant.create({
+            name: name,
+            tel: tel,
+            address: address,
+            opening_hours: opening_hours,
+            description: description,
+            image: imgLink
+          })
+        } catch (e) {
+          console.log(e)
+        }
+      }
+      return start()
     }
     return Restaurant.create({
       name: name,
@@ -43,8 +55,9 @@ const adminController = {
       opening_hours: opening_hours,
       description: description,
       image: null
+    }).catch((e) => {
+      console.log(e)
     })
-      .catch(err => console.log(err))
   },
   //取得單一餐廳資料
   getRestaurant: async function (id) {
@@ -60,17 +73,32 @@ const adminController = {
     const { name, tel, address, opening_hours, description } = body
     const restaurant = await Restaurant.findByPk(id)
     if (file) {
-      imgur.setClientID(IMGUR_CLIENT_ID);
-      return imgur.upload(file.path, (err, img) => {
-        restaurant.update({
-          name: name,
-          tel: tel,
-          address: address,
-          opening_hours: opening_hours,
-          description: description,
-          image: file ? img.data.link : restaurant.image
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      //將upload寫成promise物件處理非同步
+      const imgPromise = () => {
+        return new Promise((resolve, reject) => {
+          imgur.upload(file.path, (err, img) => {
+            return resolve(img.data.link)
+          })
         })
-      })
+      }
+      async function start() {
+        try {
+          let imgLink = await imgPromise()
+          console.log(imgLink)
+          restaurant.update({
+            name: name,
+            tel: tel,
+            address: address,
+            opening_hours: opening_hours,
+            description: description,
+            image: imgLink
+          })
+        } catch (e) {
+          console.log(e)
+        }
+      }
+      return start()
     }
     return restaurant.update({
       name: name,

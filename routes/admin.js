@@ -35,10 +35,8 @@ router.post('/restaurants', upload.single('image'), handleErrorAsync(async (req,
     return res.redirect('back')
   }
   await adminController.postRestaurant(req.file, req.body)
-  setTimeout(() => {
-    req.flash('success_messages', 'restaurant was successfully created')
-    return res.redirect('/admin/restaurants')
-  }, 3000)
+  req.flash('success_messages', 'restaurant was successfully created')
+  return res.redirect('/admin/restaurants')
 }))
 
 //瀏覽單一餐廳資訊
@@ -60,10 +58,9 @@ router.put('/restaurants/:id', upload.single('image'), handleErrorAsync(async (r
     return res.redirect('back')
   }
   await adminController.putRestaurant(req.file, req.body, req.params.id)
-  setTimeout(() => {
-    req.flash('success_messages', 'restaurant was successfully to update')
-    return res.redirect('/admin/restaurants')
-  }, 3000)
+  req.flash('success_messages', 'restaurant was successfully to update')
+  return res.redirect('/admin/restaurants')
+
 }))
 
 //刪除餐廳
