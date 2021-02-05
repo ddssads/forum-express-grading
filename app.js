@@ -6,6 +6,8 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const routes = require('./routes/index')
 const passport = require('./config/passport')
+const AppError = require('./error')
+const errorHandler = require('./middleware/err')
 const methodOverride = require('method-override')
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -31,8 +33,12 @@ app.use((req, res, next) => {
   res.locals.user = helpers.getUser(req)
   next()
 })
-
 app.use(routes)
+app.all('*', (req, res, next) => {
+  appErr = new AppError(`Can't find ${req.originalUrl}`, 404)
+  next(appErr)
+})
+app.use(errorHandler)
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
