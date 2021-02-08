@@ -11,10 +11,15 @@ const { rejects } = require('assert')
 const upload = multer({ dest: 'temp/' })
 const Restaurant = db.Restaurant
 const User = db.User
+const Category = db.Category
 const adminController = {
   //取得所有餐廳資料
   getRestaurants: async function () {
-    const restaurants = await Restaurant.findAll({ raw: true, nest: true })
+    const restaurants = await Restaurant.findAll({
+      raw: true,
+      nest: true,
+      include: [Category]
+    })
     return restaurants
   },
   //新增餐廳
@@ -62,8 +67,8 @@ const adminController = {
   //取得單一餐廳資料
   getRestaurant: async function (id) {
     try {
-      const restaurant = await Restaurant.findByPk(id, { raw: true })
-      return restaurant
+      const restaurant = await Restaurant.findByPk(id, { include: [Category] })
+      return restaurant.toJSON()
     } catch (e) {
       console.log(e)
     }
