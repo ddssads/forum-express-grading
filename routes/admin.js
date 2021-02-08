@@ -24,8 +24,9 @@ router.get('/restaurants', handleErrorAsync(async (req, res, next) => {
 }))
 
 //新增餐廳頁面
-router.get('/restaurants/create', (req, res) => {
-  return res.render('admin/create')
+router.get('/restaurants/create', async (req, res) => {
+  const categories = await adminController.getCategories()
+  return res.render('admin/create', { categories })
 })
 
 //新增餐廳
@@ -48,7 +49,8 @@ router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
 //編輯餐廳資訊頁面
 router.get('/restaurants/:id/edit', handleErrorAsync(async (req, res, next) => {
   const restaurant = await adminController.getRestaurant(req.params.id)
-  return res.render('admin/create', { restaurant })
+  const categories = await adminController.getCategories()
+  return res.render('admin/create', { restaurant, categories })
 }))
 
 //編輯餐廳資訊

@@ -22,9 +22,14 @@ const adminController = {
     })
     return restaurants
   },
+  //取得所有分類資料
+  getCategories: async () => {
+    const categories = await Category.findAll({ raw: true, nest: true, })
+    return categories
+  },
   //新增餐廳
   postRestaurant: (file, body) => {
-    const { name, tel, address, opening_hours, description } = body
+    const { name, tel, address, opening_hours, description, categoryId } = body
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
       //將upload寫成promise物件處理非同步
@@ -45,7 +50,8 @@ const adminController = {
             address: address,
             opening_hours: opening_hours,
             description: description,
-            image: imgLink
+            image: imgLink,
+            CategoryId: categoryId
           })
         } catch (e) {
           console.log(e)
@@ -59,7 +65,8 @@ const adminController = {
       address: address,
       opening_hours: opening_hours,
       description: description,
-      image: null
+      image: null,
+      CategoryId: categoryId
     }).catch((e) => {
       console.log(e)
     })
@@ -75,7 +82,7 @@ const adminController = {
   },
   //編輯單一餐廳資料
   putRestaurant: async (file, body, id) => {
-    const { name, tel, address, opening_hours, description } = body
+    const { name, tel, address, opening_hours, description, categoryId } = body
     const restaurant = await Restaurant.findByPk(id)
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
@@ -97,7 +104,8 @@ const adminController = {
             address: address,
             opening_hours: opening_hours,
             description: description,
-            image: imgLink
+            image: imgLink,
+            CategoryId: categoryId
           })
         } catch (e) {
           console.log(e)
@@ -111,7 +119,8 @@ const adminController = {
       address: address,
       opening_hours: opening_hours,
       description: description,
-      image: restaurant.image
+      image: restaurant.image,
+      CategoryId: categoryId
     })
   },
   //刪除單一餐廳
