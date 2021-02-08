@@ -22,7 +22,8 @@ module.exports = {
         image: `https://loremflickr.com/320/240/restaurant,food/?random=${Math.random() * 100}`,
         description: faker.lorem.text(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        CategoryId: Math.floor(Math.random() * 5) + 1
       })
       ), {})
   },
