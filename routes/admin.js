@@ -91,13 +91,24 @@ router.get('/categories', handleErrorAsync(async (req, res, next) => {
   const categories = await categoryController.getCategories()
   return res.render('admin/categories', { categories })
 }))
-
+//新增分類
 router.post('/categories', handleErrorAsync(async (req, res, next) => {
   if (!req.body.name) {
     req.flash('error_messages', 'name didn\'t exist')
     return res.redirect('back')
   }
   await categoryController.postCategory(req.body)
+  return res.redirect('/admin/categories')
+}))
+//編輯單一分類
+router.get('/categories/:id', handleErrorAsync(async (req, res, next) => {
+  const { categories, category } = await categoryController.getCategories(req.params.id)
+  console.log(categories)
+  console.log('category', category)
+  return res.render('admin/categories', { categories, category })
+}))
+router.put('/categories/:id', handleErrorAsync(async (req, res, next) => {
+  const category = await categoryController.putCategory(req.params.id, req.body)
   return res.redirect('/admin/categories')
 }))
 module.exports = router

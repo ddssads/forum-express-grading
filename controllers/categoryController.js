@@ -3,9 +3,14 @@ const Category = db.Category
 
 const categoryController = {
   //取得所有分類資料
-  getCategories: async () => {
+  getCategories: async (id) => {
     const categories = await Category.findAll({ raw: true, nest: true, })
-    return categories
+    if (!id) {
+      return categories
+    }
+    const categoryNoJson = await Category.findByPk(id)
+    const category = categoryNoJson.toJSON()
+    return { categories, category }
   },
   //新增一筆分類
   postCategory: async (body) => {
@@ -15,6 +20,10 @@ const categoryController = {
         console.log(e)
       })
   },
+  putCategory: async (id, body) => {
+    const category = await Category.findByPk(id)
+    return category.update(body)
+  }
 }
 
 module.exports = categoryController
