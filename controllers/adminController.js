@@ -22,11 +22,6 @@ const adminController = {
     })
     return restaurants
   },
-  //取得所有分類資料
-  getCategories: async () => {
-    const categories = await Category.findAll({ raw: true, nest: true, })
-    return categories
-  },
   //新增餐廳
   postRestaurant: (file, body) => {
     const { name, tel, address, opening_hours, description, categoryId } = body

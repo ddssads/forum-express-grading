@@ -1,9 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const adminController = require('../controllers/adminController')
+const categoryController = require('../controllers/categoryController')
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 const auth = require('../middleware/auth')
+const { route } = require('./home')
 const handleErrorAsync = func => async (req, res, next) => {
   try {
     await func(req, res, next)
@@ -25,7 +27,7 @@ router.get('/restaurants', handleErrorAsync(async (req, res, next) => {
 
 //新增餐廳頁面
 router.get('/restaurants/create', async (req, res) => {
-  const categories = await adminController.getCategories()
+  const categories = await categoryController.getCategories()
   return res.render('admin/create', { categories })
 })
 
@@ -49,7 +51,7 @@ router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
 //編輯餐廳資訊頁面
 router.get('/restaurants/:id/edit', handleErrorAsync(async (req, res, next) => {
   const restaurant = await adminController.getRestaurant(req.params.id)
-  const categories = await adminController.getCategories()
+  const categories = await categoryController.getCategories()
   return res.render('admin/create', { restaurant, categories })
 }))
 
@@ -84,4 +86,18 @@ router.put('/users/:id/toggleAdmin', handleErrorAsync(async (req, res, next) => 
   return res.redirect('/admin/users')
 }))
 
+//顯示分類頁面
+router.get('/categories', handleErrorAsync(async (req, res, next) => {
+  const categories = await categoryController.getCategories()
+  return res.render('admin/categories', { categories })
+}))
+
+router.post('/categories', handleErrorAsync(async (req, res, next) => {
+  if (!req.body.name) {
+    req.flash('error_messages', 'name didn\'t exist')
+    return res.redirect('back')
+  }
+  await categoryController.postCategory(req.body)
+  return res.redirect('/admin/categories')
+}))
 module.exports = router
