@@ -107,8 +107,14 @@ router.get('/categories/:id', handleErrorAsync(async (req, res, next) => {
   console.log('category', category)
   return res.render('admin/categories', { categories, category })
 }))
+
 router.put('/categories/:id', handleErrorAsync(async (req, res, next) => {
   const category = await categoryController.putCategory(req.params.id, req.body)
+  return res.redirect('/admin/categories')
+}))
+//刪除分類
+router.delete('/categories/:id', handleErrorAsync(async (req, res, next) => {
+  await categoryController.deleteCategory(req.params.id)
   return res.redirect('/admin/categories')
 }))
 module.exports = router
