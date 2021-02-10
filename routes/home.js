@@ -15,8 +15,8 @@ const handleErrorAsync = func => async (req, res, next) => {
 router.get('/', auth.authenticated, (req, res) => res.redirect('/restaurants'))
 //顯示所有餐廳頁面
 router.get('/restaurants', auth.authenticated, handleErrorAsync(async (req, res, next) => {
-  const { data, categories } = await restController.getRestaurants(req.query.categoryId)
-  return res.render('restaurants', { restaurants: data, categories })
+  const { data, categories, categoryId, totalPage, prev, nextPage, page } = await restController.getRestaurants(req.query)
+  return res.render('restaurants', { restaurants: data, categories, categoryId, totalPage, prev, nextPage, page })
 }))
 //顯示單一餐廳頁面
 router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
