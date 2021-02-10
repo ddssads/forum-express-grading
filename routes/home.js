@@ -13,19 +13,23 @@ const handleErrorAsync = func => async (req, res, next) => {
 }
 
 router.get('/', auth.authenticated, (req, res) => res.redirect('/restaurants'))
+
 //顯示所有餐廳頁面
 router.get('/restaurants', auth.authenticated, handleErrorAsync(async (req, res, next) => {
   const { data, categories, categoryId, totalPage, prev, nextPage, page } = await restController.getRestaurants(req.query)
   return res.render('restaurants', { restaurants: data, categories, categoryId, totalPage, prev, nextPage, page })
 }))
+
 //顯示單一餐廳頁面
 router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
   const restaurant = await restController.getRestaurant(req.params.id)
   return res.render('restaurant', { restaurant })
 }))
+
 router.get('/signup', (req, res) => {
   return res.render('signup')
 })
+
 router.post('/signup', handleErrorAsync(async (req, res, next) => {
   if (req.body.passwordCheck !== req.body.password) {
     req.flash('error_messages', '兩次輸入密碼不相同！')
