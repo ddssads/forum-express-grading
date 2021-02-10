@@ -13,11 +13,16 @@ const handleErrorAsync = func => async (req, res, next) => {
 }
 
 router.get('/', auth.authenticated, (req, res) => res.redirect('/restaurants'))
+//顯示所有餐廳頁面
 router.get('/restaurants', auth.authenticated, handleErrorAsync(async (req, res, next) => {
   const restaurants = await restController.getRestaurants()
   return res.render('restaurants', { restaurants })
 }))
-
+//顯示單一餐廳頁面
+router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
+  const restaurant = await restController.getRestaurant(req.params.id)
+  return res.render('restaurant', { restaurant })
+}))
 router.get('/signup', (req, res) => {
   return res.render('signup')
 })

@@ -12,6 +12,10 @@ const restController = {
       categoryName: r.Category.name
     }))
     return data
+  },
+  getRestaurant: async (id) => {
+    const restaurant = await Restaurant.findByPk(id, { include: Category })
+    return restaurant.toJSON()
   }
 }
 module.exports = restController
