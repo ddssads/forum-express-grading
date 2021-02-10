@@ -3,6 +3,7 @@ const router = express.Router()
 const userController = require('../controllers/userController')
 const passport = require('passport')
 const auth = require('../middleware/auth')
+const restController = require('../controllers/restController')
 const handleErrorAsync = func => async (req, res, next) => {
   try {
     await func(req, res, next)
@@ -12,9 +13,10 @@ const handleErrorAsync = func => async (req, res, next) => {
 }
 
 router.get('/', auth.authenticated, (req, res) => res.redirect('/restaurants'))
-router.get('/restaurants', auth.authenticated, (req, res) => {
-  return res.render('restaurants')
-})
+router.get('/restaurants', auth.authenticated, handleErrorAsync(async (req, res, next) => {
+  const restaurants = await restController.getRestaurants()
+  return res.render('restaurants', { restaurants })
+}))
 
 router.get('/signup', (req, res) => {
   return res.render('signup')
