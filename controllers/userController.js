@@ -75,5 +75,4 @@ const userController = {
     })
   }
 }
-userController.getUserComment(1)
 module.exports = userController
