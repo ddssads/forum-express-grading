@@ -1,7 +1,11 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
-
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const userController = {
   //檢查email是否已經註冊
   checkUser: async function (email) {
@@ -22,6 +26,41 @@ const userController = {
         password: hash
       }))
       .catch(err => console.log(err))
+  },
+  getUser: async function (id) {
+    const user = await User.findByPk(id)
+    return user.toJSON()
+  },
+  putUser: async function (file, body, id) {
+    const user = await User.findByPk(id)
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      //將upload寫成promise物件處理非同步
+      const imgPromise = () => {
+        return new Promise((resolve, reject) => {
+          imgur.upload(file.path, (err, img) => {
+            return resolve(img.data.link)
+          })
+        })
+      }
+      async function start() {
+        try {
+          let imgLink = await imgPromise()
+          console.log(imgLink)
+          user.update({
+            name: body.name,
+            image: imgLink
+          })
+        } catch (e) {
+          console.log(e)
+        }
+      }
+      return start()
+    }
+    return user.update({
+      name: body.name,
+      image: user.image,
+    })
   }
 }
 
