@@ -39,7 +39,6 @@ const restController = {
         { model: Comment, include: [User] }
       ]
     })
-    console.log(restaurant.Comments[0].dataValues)
     return restaurant.toJSON()
   }
 }

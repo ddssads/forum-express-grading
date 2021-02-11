@@ -16,5 +16,10 @@ router.post('/', handleErrorAsync(async (req, res, next) => {
   return res.redirect(`/restaurants/${req.body.restaurantId}`)
 }))
 
+router.delete('/:id', auth.authenticatedAdmin, handleErrorAsync(async (req, res, next) => {
+  await commentController.deleteComment(req.params.id)
+  console.log(req.body.restaurantId)
+  return res.redirect(`/restaurants/${req.body.restaurantId}`)
+}))
 
 module.exports = router

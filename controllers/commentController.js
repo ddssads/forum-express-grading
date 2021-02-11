@@ -8,6 +8,11 @@ const commentController = {
       RestaurantId: body.restaurantId,
       UserId: user.id
     })
+  },
+
+  deleteComment: async (id) => {
+    const commit = await Comment.findByPk(id)
+    return commit.destroy()
   }
 }
 
