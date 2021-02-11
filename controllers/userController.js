@@ -31,11 +31,7 @@ const userController = {
       .catch(err => console.log(err))
   },
   getUser: async function (id) {
-    const user = await User.findByPk(id, {
-      include: [{
-        model: Comment, include: [Restaurant]
-      }]
-    })
+    const user = await User.findByPk(id)
     return user.toJSON()
   },
   getUserComment: async function (id) {
@@ -45,7 +41,6 @@ const userController = {
       restaurantImage: c.Restaurant.image
     }))
     const totalComments = comments.count
-    console.log(userComments, totalComments)
     return { userComments, totalComments }
   },
   putUser: async function (file, body, id) {

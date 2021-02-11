@@ -140,15 +140,7 @@ const adminController = {
   toggleAdmin: async function (id) {
     try {
       const user = await User.findByPk(id)
-      if (user.isAdmin) {
-        user.update({
-          isAdmin: false
-        })
-      } else {
-        user.update({
-          isAdmin: true
-        })
-      }
+      await user.update({ isAdmin: !user.isAdmin })
       return user
     } catch (e) {
       console.log(e)
