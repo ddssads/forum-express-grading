@@ -16,7 +16,7 @@ module.exports = {
       Array.from({ length: 10 }).map((_, i) => ({
         text: 'wowwww',
         UserId: Math.floor(Math.random() * 3) + 1,
-        RestaurantId: Math.floor(Math.random() * 50) + 51,
+        RestaurantId: Math.floor(Math.random() * 50) + 1,
         createdAt: new Date(),
         updatedAt: new Date()
       })

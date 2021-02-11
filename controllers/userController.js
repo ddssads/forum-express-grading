@@ -8,6 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const imgur = require('imgur-node-api')
 const router = require('../routes/comment')
+const { use } = require('../routes/comment')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const userController = {
   //檢查email是否已經註冊
@@ -38,7 +39,8 @@ const userController = {
     const comments = await Comment.findAndCountAll({ include: Restaurant, where: { UserId: id } })
     const userComments = comments.rows.map((c, i) => ({
       ...c.dataValues,
-      restaurantImage: c.Restaurant.image
+      restaurantImage: c.Restaurant.image,
+      restaurantName: c.Restaurant.name,
     }))
     const totalComments = comments.count
     return { userComments, totalComments }
