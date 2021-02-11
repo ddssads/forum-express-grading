@@ -1,10 +1,13 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models')
+const Comment = db.Comment
+const Restaurant = db.Restaurant
 const User = db.User
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 const imgur = require('imgur-node-api')
+const router = require('../routes/comment')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const userController = {
   //檢查email是否已經註冊
@@ -28,8 +31,22 @@ const userController = {
       .catch(err => console.log(err))
   },
   getUser: async function (id) {
-    const user = await User.findByPk(id)
+    const user = await User.findByPk(id, {
+      include: [{
+        model: Comment, include: [Restaurant]
+      }]
+    })
     return user.toJSON()
+  },
+  getUserComment: async function (id) {
+    const comments = await Comment.findAndCountAll({ include: Restaurant, where: { UserId: id } })
+    const userComments = comments.rows.map((c, i) => ({
+      ...c.dataValues,
+      restaurantImage: c.Restaurant.image
+    }))
+    const totalComments = comments.count
+    console.log(userComments, totalComments)
+    return { userComments, totalComments }
   },
   putUser: async function (file, body, id) {
     const user = await User.findByPk(id)
@@ -63,5 +80,5 @@ const userController = {
     })
   }
 }
-
+userController.getUserComment(1)
 module.exports = userController

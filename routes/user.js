@@ -16,8 +16,9 @@ router.use(auth.authenticated)
 
 router.get('/:id', handleErrorAsync(async (req, res, next) => {
   const user = await userController.getUser(req.params.id)
-  console.log(user)
-  return res.render('admin/user', { user })
+  const { userComments, totalComments } = await userController.getUserComment(req.params.id)
+  console.log('@@@', totalComments)
+  return res.render('admin/user', { user, userComments, totalComments })
 }))
 
 router.get('/:id/edit', handleErrorAsync(async (req, res, next) => {
