@@ -12,6 +12,8 @@ const handleErrorAsync = func => async (req, res, next) => {
 }
 const userController = require('../controllers/userController')
 
+router.use(auth.authenticated)
+
 router.get('/:id', handleErrorAsync(async (req, res, next) => {
   const user = await userController.getUser(req.params.id)
   console.log(user)
