@@ -6,13 +6,7 @@ const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 const auth = require('../middleware/auth')
 const { route } = require('./home')
-const handleErrorAsync = func => async (req, res, next) => {
-  try {
-    await func(req, res, next)
-  } catch (error) {
-    next(error)
-  }
-}
+const handleErrorAsync = require('../_helpers').handleErrorAsync
 //進入admin入由前須先驗證
 router.use(auth.authenticatedAdmin)
 

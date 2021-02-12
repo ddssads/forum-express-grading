@@ -3,13 +3,7 @@ const router = express.Router()
 const auth = require('../middleware/auth')
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
-const handleErrorAsync = func => async (req, res, next) => {
-  try {
-    await func(req, res, next)
-  } catch (error) {
-    next(error)
-  }
-}
+const handleErrorAsync = require('../_helpers').handleErrorAsync
 const userController = require('../controllers/userController')
 
 router.use(auth.authenticated)
