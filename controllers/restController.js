@@ -61,6 +61,13 @@ const restController = {
   getTotalCountOfComment: async (id) => {
     const totalCount = await Comment.count({ where: { RestaurantId: id } })
     return totalCount
+  },
+  calculatorViewCounts: async (id) => {
+    const restaurant = await Restaurant.findByPk(id)
+    const viewCounts = restaurant.viewCounts
+    restaurant.update({
+      viewCounts: viewCounts + 1
+    })
   }
 }
 

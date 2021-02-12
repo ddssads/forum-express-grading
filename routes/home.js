@@ -35,6 +35,7 @@ router.get('/restaurant/dashboard/:id', handleErrorAsync(async (req, res, next) 
 //顯示單一餐廳頁面
 router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
   const restaurant = await restController.getRestaurant(req.params.id)
+  await restController.calculatorViewCounts(req.params.id)
   return res.render('restaurant', { restaurant })
 }))
 
