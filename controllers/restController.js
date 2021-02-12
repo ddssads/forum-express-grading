@@ -63,11 +63,7 @@ const restController = {
     return totalCount
   },
   calculatorViewCounts: async (id) => {
-    const restaurant = await Restaurant.findByPk(id)
-    const viewCounts = restaurant.viewCounts
-    restaurant.update({
-      viewCounts: viewCounts + 1
-    })
+    await Restaurant.increment('viewCounts', { where: { id } })
   }
 }
 
