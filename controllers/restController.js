@@ -57,6 +57,11 @@ const restController = {
       include: [User, Restaurant]
     })
     return { restaurants, comments }
+  },
+  getTotalCountOfComment: async (id) => {
+    const totalCount = await Comment.count({ where: { RestaurantId: id } })
+    return totalCount
   }
 }
+
 module.exports = restController

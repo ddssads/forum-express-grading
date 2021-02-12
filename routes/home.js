@@ -25,6 +25,12 @@ router.get('/restaurants/feeds', handleErrorAsync(async (req, res, next) => {
   const { restaurants, comments } = await restController.getFeeds()
   res.render('feeds', { restaurants, comments })
 }))
+//dashboard
+router.get('/restaurant/dashboard/:id', handleErrorAsync(async (req, res, next) => {
+  const restaurant = await restController.getRestaurant(req.params.id)
+  const totalCount = await restController.getTotalCountOfComment(req.params.id)
+  return res.render('dashboard', { restaurant, totalCount })
+}))
 
 //顯示單一餐廳頁面
 router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
