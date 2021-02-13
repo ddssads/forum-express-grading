@@ -3,16 +3,18 @@ const db = require('../models')
 const Comment = db.Comment
 const Restaurant = db.Restaurant
 const User = db.User
+const Favorite = db.Favorite
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 const imgur = require('imgur-node-api')
 const router = require('../routes/comment')
 const { use } = require('../routes/comment')
+const restaurant = require('../models/restaurant')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const userController = {
   //檢查email是否已經註冊
-  checkUser: async function (email) {
+  checkUser: async (email) => {
     try {
       const user = await User.findOne({ where: { email } })
       return user
@@ -31,11 +33,11 @@ const userController = {
       }))
       .catch(err => console.log(err))
   },
-  getUser: async function (id) {
+  getUser: async (id) => {
     const user = await User.findByPk(id)
     return user.toJSON()
   },
-  getUserComment: async function (id) {
+  getUserComment: async (id) => {
     const comments = await Comment.findAndCountAll({ include: Restaurant, where: { UserId: id } })
     const userComments = comments.rows.map((c, i) => ({
       ...c.dataValues,
@@ -45,7 +47,7 @@ const userController = {
     const totalComments = comments.count
     return { userComments, totalComments }
   },
-  putUser: async function (file, body, id) {
+  putUser: async (file, body, id) => {
     const user = await User.findByPk(id)
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
@@ -75,6 +77,21 @@ const userController = {
       name: body.name,
       image: user.image,
     })
+  },
+  addFavorite: async (userId, restaurantId) => {
+    await Favorite.create({
+      UserId: userId,
+      RestaurantId: restaurantId
+    })
+  },
+  removeFavorite: async (userId, restaurantId) => {
+    const favorite = await Favorite.findOne({
+      where: {
+        UserId: userId,
+        RestaurantId: restaurantId
+      }
+    })
+    await favorite.destroy()
   }
 }
 module.exports = userController
