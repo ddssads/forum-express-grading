@@ -71,7 +71,6 @@ const restController = {
     await Restaurant.increment('viewCounts', { where: { id } })
   },
   checkIsLike: (restaurant, id) => {
-    const
     const isLiked = restaurant.LikedUsers.map(d => d.id).includes(id)
     return isLiked
   },
