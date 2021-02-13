@@ -6,7 +6,7 @@ const handleErrorAsync = require('../_helpers').handleErrorAsync
 
 router.use(auth.authenticated)
 router.get('/', handleErrorAsync(async (req, res, next) => {
-  const { data, categories, categoryId, totalPage, prev, nextPage, page } = await restController.getRestaurants(req.query)
+  const { data, categories, categoryId, totalPage, prev, nextPage, page } = await restController.getRestaurants(req.query, req.user)
   return res.render('restaurants', { restaurants: data, categories, categoryId, totalPage, prev, nextPage, page })
 }))
 
@@ -17,14 +17,14 @@ router.get('/feeds', handleErrorAsync(async (req, res, next) => {
 }))
 //顯示單一餐廳頁面
 router.get('/:id', handleErrorAsync(async (req, res, next) => {
-  const restaurant = await restController.getRestaurant(req.params.id)
+  const { restaurant, isFavorited } = await restController.getRestaurant(req.params.id, req.user)
   await restController.calculatorViewCounts(req.params.id)
-  return res.render('restaurant', { restaurant })
+  return res.render('restaurant', { restaurant, isFavorited })
 }))
 
 //dashboard
 router.get('/:id/dashboard', handleErrorAsync(async (req, res, next) => {
-  const restaurant = await restController.getRestaurant(req.params.id)
+  const { restaurant } = await restController.getRestaurant(req.params.id, req.user)
   const totalCount = await restController.getTotalCountOfComment(req.params.id)
   return res.render('dashboard', { restaurant, totalCount })
 }))

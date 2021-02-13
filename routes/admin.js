@@ -38,13 +38,13 @@ router.post('/restaurants', upload.single('image'), handleErrorAsync(async (req,
 
 //瀏覽單一餐廳資訊
 router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
-  const restaurant = await adminController.getRestaurant(req.params.id)
+  const restaurant = await adminController.getRestaurant(req.params.id, req.user)
   res.render('admin/restaurant', { restaurant })
 }))
 
 //編輯餐廳資訊頁面
 router.get('/restaurants/:id/edit', handleErrorAsync(async (req, res, next) => {
-  const restaurant = await adminController.getRestaurant(req.params.id)
+  const restaurant = await adminController.getRestaurant(req.params.id, req.user)
   const categories = await categoryController.getCategories()
   return res.render('admin/create', { restaurant, categories })
 }))

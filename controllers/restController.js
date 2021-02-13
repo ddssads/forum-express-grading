@@ -7,7 +7,7 @@ const pageLimit = 10
 
 
 const restController = {
-  getRestaurants: async (query) => {
+  getRestaurants: async (query, user) => {
     const whereQuery = {}
     let categoryId = ''
     let offset = 0
@@ -27,19 +27,23 @@ const restController = {
     const data = result.rows.map(r => ({
       ...r.dataValues,
       description: r.description.substring(0, 50),
-      categoryName: r.Category.name
+      categoryName: r.Category.name,
+      isFavorited: user.FavoritedRestaurants.map(d => d.id).includes(r.id)
     }))
     const categories = await Category.findAll({ raw: true, nest: true })
     return { data, categories, categoryId, totalPage, prev, nextPage, page }
   },
-  getRestaurant: async (id) => {
-    const restaurant = await Restaurant.findByPk(id, {
+  getRestaurant: async (id, user) => {
+    let restaurant = await Restaurant.findByPk(id, {
       include: [
         Category,
+        { model: User, as: 'FavoritedUsers' },
         { model: Comment, include: [User] }
       ]
     })
-    return restaurant.toJSON()
+    const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(user.id)
+    restaurant = restaurant.toJSON()
+    return { restaurant, isFavorited }
   },
   getFeeds: async () => {
     const restaurants = await Restaurant.findAll({
