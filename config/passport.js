@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
 const Restaurant = db.Restaurant
+const Like = db.Like
 
 module.exports = app => {
   app.use(passport.initialize())
@@ -35,7 +36,8 @@ module.exports = app => {
   passport.deserializeUser((id, cb) => {
     User.findByPk(id, {
       include: [
-        { model: Restaurant, as: 'FavoritedRestaurants' }
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: Restaurant, as: 'LikedRestaurants' }
       ]
     }).then(user => {
       user = user.toJSON()

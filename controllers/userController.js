@@ -4,6 +4,7 @@ const Comment = db.Comment
 const Restaurant = db.Restaurant
 const User = db.User
 const Favorite = db.Favorite
+const Like = db.Like
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
@@ -92,6 +93,21 @@ const userController = {
       }
     })
     await favorite.destroy()
+  },
+  addLike: async (userId, restaurantId) => {
+    await Like.create({
+      UserId: userId,
+      RestaurantId: restaurantId
+    })
+  },
+  removeLike: async (userId, restaurantId) => {
+    const like = await Like.findOne({
+      where: {
+        UserId: userId,
+        RestaurantId: restaurantId
+      }
+    })
+    await like.destroy()
   }
 }
 module.exports = userController

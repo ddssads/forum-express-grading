@@ -1,3 +1,4 @@
+const { useFakeServer } = require('sinon')
 const db = require('../models')
 const Category = db.Category
 const Restaurant = db.Restaurant
@@ -28,7 +29,8 @@ const restController = {
       ...r.dataValues,
       description: r.description.substring(0, 50),
       categoryName: r.Category.name,
-      isFavorited: user.FavoritedRestaurants.map(d => d.id).includes(r.id)
+      isFavorited: user.FavoritedRestaurants.map(d => d.id).includes(r.id),
+      isLiked: user.LikedRestaurants.map(d => d.id).includes(r.id)
     }))
     const categories = await Category.findAll({ raw: true, nest: true })
     return { data, categories, categoryId, totalPage, prev, nextPage, page }
@@ -37,13 +39,15 @@ const restController = {
     let restaurant = await Restaurant.findByPk(id, {
       include: [
         Category,
+        { model: User, as: 'LikedUsers' },
         { model: User, as: 'FavoritedUsers' },
         { model: Comment, include: [User] }
       ]
     })
     const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(user.id)
+    const isLiked = restaurant.LikedUsers.map(d => d.id).includes(user.id)
     restaurant = restaurant.toJSON()
-    return { restaurant, isFavorited }
+    return { restaurant, isFavorited, isLiked }
   },
   getFeeds: async () => {
     const restaurants = await Restaurant.findAll({

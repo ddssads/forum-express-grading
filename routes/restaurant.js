@@ -17,9 +17,9 @@ router.get('/feeds', handleErrorAsync(async (req, res, next) => {
 }))
 //顯示單一餐廳頁面
 router.get('/:id', handleErrorAsync(async (req, res, next) => {
-  const { restaurant, isFavorited } = await restController.getRestaurant(req.params.id, req.user)
+  const { restaurant, isFavorited, isLiked } = await restController.getRestaurant(req.params.id, req.user)
   await restController.calculatorViewCounts(req.params.id)
-  return res.render('restaurant', { restaurant, isFavorited })
+  return res.render('restaurant', { restaurant, isFavorited, isLiked })
 }))
 
 //dashboard
