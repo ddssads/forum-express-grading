@@ -35,7 +35,7 @@ const restController = {
     const categories = await Category.findAll({ raw: true, nest: true })
     return { data, categories, categoryId, totalPage, prev, nextPage, page }
   },
-  getRestaurant: async (id, user) => {
+  getRestaurant: async (id) => {
     let restaurant = await Restaurant.findByPk(id, {
       include: [
         Category,
@@ -44,10 +44,7 @@ const restController = {
         { model: Comment, include: [User] }
       ]
     })
-    const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(user.id)
-    const isLiked = restaurant.LikedUsers.map(d => d.id).includes(user.id)
-    restaurant = restaurant.toJSON()
-    return { restaurant, isFavorited, isLiked }
+    return restaurant.toJSON()
   },
   getFeeds: async () => {
     const restaurants = await Restaurant.findAll({
@@ -72,6 +69,15 @@ const restController = {
   },
   calculatorViewCounts: async (id) => {
     await Restaurant.increment('viewCounts', { where: { id } })
+  },
+  checkIsLike: (restaurant, id) => {
+    const
+    const isLiked = restaurant.LikedUsers.map(d => d.id).includes(id)
+    return isLiked
+  },
+  checkIsFavorited: (restaurant, id) => {
+    const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(id)
+    return isFavorited
   }
 }
 

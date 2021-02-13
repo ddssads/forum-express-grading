@@ -3,10 +3,11 @@ const router = express.Router()
 const auth = require('../middleware/auth')
 const restController = require('../controllers/restController')
 const handleErrorAsync = require('../_helpers').handleErrorAsync
+const helpers = require('../_helpers')
 
 router.use(auth.authenticated)
 router.get('/', handleErrorAsync(async (req, res, next) => {
-  const { data, categories, categoryId, totalPage, prev, nextPage, page } = await restController.getRestaurants(req.query, req.user)
+  const { data, categories, categoryId, totalPage, prev, nextPage, page } = await restController.getRestaurants(req.query, helpers.getUser(req))
   return res.render('restaurants', { restaurants: data, categories, categoryId, totalPage, prev, nextPage, page })
 }))
 
@@ -17,14 +18,16 @@ router.get('/feeds', handleErrorAsync(async (req, res, next) => {
 }))
 //顯示單一餐廳頁面
 router.get('/:id', handleErrorAsync(async (req, res, next) => {
-  const { restaurant, isFavorited, isLiked } = await restController.getRestaurant(req.params.id, req.user)
+  const restaurant = await restController.getRestaurant(req.params.id)
+  const isLiked = await restController.checkIsLike(restaurant, helpers.getUser(req).id)
+  const isFavorited = await restController.checkIsFavorited(restaurant, helpers.getUser(req).id)
   await restController.calculatorViewCounts(req.params.id)
   return res.render('restaurant', { restaurant, isFavorited, isLiked })
 }))
 
 //dashboard
 router.get('/:id/dashboard', handleErrorAsync(async (req, res, next) => {
-  const { restaurant } = await restController.getRestaurant(req.params.id, req.user)
+  const restaurant = await restController.getRestaurant(req.params.id)
   const totalCount = await restController.getTotalCountOfComment(req.params.id)
   return res.render('dashboard', { restaurant, totalCount })
 }))
