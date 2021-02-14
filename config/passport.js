@@ -37,7 +37,9 @@ module.exports = app => {
     User.findByPk(id, {
       include: [
         { model: Restaurant, as: 'FavoritedRestaurants' },
-        { model: Restaurant, as: 'LikedRestaurants' }
+        { model: Restaurant, as: 'LikedRestaurants' },
+        { model: User, as: 'Followers' },//誰在追蹤我
+        { model: User, as: 'Followings' }//我在追蹤誰
       ]
     }).then(user => {
       user = user.toJSON()
