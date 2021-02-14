@@ -36,18 +36,34 @@ const userController = {
       .catch(err => console.log(err))
   },
   getUser: async (id) => {
-    const user = await User.findByPk(id)
+    const user = await User.findByPk(id, {
+      include: [
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: User, as: 'Followers' },//誰在追蹤我
+        { model: User, as: 'Followings' }//我在追蹤誰
+      ]
+    })
     return user.toJSON()
   },
+  //找出使用者收藏追蹤被追蹤的總數
+  getUserTotalData: (user) => {
+    const totalFavoritedRestaurants = user.FavoritedRestaurants.length
+    const totalFollowings = user.Followings.length//追蹤誰
+    const totalFollowers = user.Followers.length//誰在追蹤
+    return { totalFavoritedRestaurants, totalFollowings, totalFollowers }
+  },
   getUserComment: async (id) => {
-    const comments = await Comment.findAndCountAll({ include: Restaurant, where: { UserId: id } })
-    const userComments = comments.rows.map((c, i) => ({
+    const set = new Set()
+    let commentsData = await Comment.findAndCountAll({ include: Restaurant, where: { UserId: id } })
+    commentsData = commentsData.rows.map((c, i) => ({
       ...c.dataValues,
       restaurantImage: c.Restaurant.image,
       restaurantName: c.Restaurant.name,
     }))
-    const totalComments = comments.count
-    return { userComments, totalComments }
+    //刪除重複評論
+    const result = commentsData.filter(item => !set.has(item.RestaurantId) ? set.add(item.RestaurantId) : false)
+    const totalComments = result.length
+    return { result, totalComments }
   },
   putUser: async (file, body, id) => {
     const user = await User.findByPk(id)
