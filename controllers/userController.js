@@ -5,6 +5,7 @@ const Restaurant = db.Restaurant
 const User = db.User
 const Favorite = db.Favorite
 const Like = db.Like
+const Followship = db.Followship
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
@@ -122,6 +123,15 @@ const userController = {
     }))
     users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
     return users
+  },
+  addFollowing: async (followerId, followingId) => {
+    await Followship.create({ followerId, followingId })
+  },
+  removeFollowing: async (followerId, followingId) => {
+    const awaitRemove = await Followship.findOne({
+      where: { followerId, followingId }
+    })
+    await awaitRemove.destroy()
   }
 }
 module.exports = userController

@@ -7,6 +7,7 @@ const user = require('./user')
 const restaurant = require('./restaurant')
 const favorite = require('./favorite')
 const like = require('./like')
+const following = require('./following')
 
 router.use('/admin', admin)
 router.use('/', home)
@@ -15,5 +16,6 @@ router.use('/users', user)
 router.use('/restaurants', restaurant)
 router.use('/favorite', favorite)
 router.use('/like', like)
+router.use('/following', following)
 
 module.exports = router
