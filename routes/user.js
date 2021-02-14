@@ -5,8 +5,14 @@ const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 const handleErrorAsync = require('../_helpers').handleErrorAsync
 const userController = require('../controllers/userController')
+const helpers = require('../_helpers')
 
 router.use(auth.authenticated)
+
+router.get('/top', handleErrorAsync(async (req, res, next) => {
+  const users = await userController.getTopUser(helpers.getUser(req))
+  return res.render('topUser', { users })
+}))
 
 router.get('/:id', handleErrorAsync(async (req, res, next) => {
   const user = await userController.getUser(req.params.id)
@@ -29,5 +35,6 @@ router.put('/:id', upload.single('image'), handleErrorAsync(async (req, res, nex
   req.flash('success_messages', 'user was successfully to update')
   return res.redirect(`/users/${req.user.id}`)
 }))
+
 
 module.exports = router

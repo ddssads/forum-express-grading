@@ -108,6 +108,20 @@ const userController = {
       }
     })
     await like.destroy()
+  },
+  getTopUser: async (reqUser) => {
+    const usersData = await User.findAll({
+      include: [
+        { model: User, as: 'Followers' } //找出每個User被追蹤的名單(user.Followers)
+      ]
+    })
+    let users = usersData.map(user => ({
+      ...user.dataValues,
+      FollowerCount: user.Followers.length, //遍歷所有user的追蹤者名單，計算有多少個追蹤者
+      isFollowed: reqUser.Followings.map(d => d.id).includes(user.id) //找出當前使用者正在追蹤的所有使用者ID(d.id)，再去比對其他使用者id如果有就代表有被當前登入者追蹤
+    }))
+    users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
+    return users
   }
 }
 module.exports = userController
