@@ -16,6 +16,11 @@ router.get('/feeds', handleErrorAsync(async (req, res, next) => {
   const { restaurants, comments } = await restController.getFeeds()
   res.render('feeds', { restaurants, comments })
 }))
+
+router.get('/top', handleErrorAsync(async (req, res, next) => {
+  const restaurants = await restController.getTopRestaurants(helpers.getUser(req))
+  return res.render('topRestaurants', { restaurants })
+}))
 //顯示單一餐廳頁面
 router.get('/:id', handleErrorAsync(async (req, res, next) => {
   const restaurant = await restController.getRestaurant(req.params.id)

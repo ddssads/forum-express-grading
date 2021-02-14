@@ -1,5 +1,6 @@
 const { useFakeServer } = require('sinon')
 const db = require('../models')
+const user = require('../models/user')
 const Category = db.Category
 const Restaurant = db.Restaurant
 const Comment = db.Comment
@@ -19,12 +20,18 @@ const restController = {
       categoryId = Number(query.categoryId)
       whereQuery.CategoryId = categoryId
     }
-    const result = await Restaurant.findAndCountAll({ include: Category, where: whereQuery, offset: offset, limit: pageLimit })
-    const page = Number(query.page) || 1
-    const pages = Math.ceil(result.count / pageLimit)
-    const totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
+    const result = await Restaurant.findAndCountAll({
+      include: Category,
+      where: whereQuery,
+      offset: offset,
+      limit: pageLimit
+    })
+    const page = Number(query.page) || 1 //當前頁數
+    const pages = Math.ceil(result.count / pageLimit) //總頁數
+    const totalPage = Array.from({ length: pages }).map((item, index) => index + 1) //用總頁數長度寫成一個陣列給前端套用
     const prev = page - 1 < 1 ? 1 : page - 1
     const nextPage = page + 1 > pages ? pages : page + 1
+    //取出所需要餐廳資料
     const data = result.rows.map(r => ({
       ...r.dataValues,
       description: r.description.substring(0, 50),
@@ -36,7 +43,7 @@ const restController = {
     return { data, categories, categoryId, totalPage, prev, nextPage, page }
   },
   getRestaurant: async (id) => {
-    let restaurant = await Restaurant.findByPk(id, {
+    const restaurant = await Restaurant.findByPk(id, {
       include: [
         Category,
         { model: User, as: 'LikedUsers' },
@@ -77,7 +84,23 @@ const restController = {
   checkIsFavorited: (restaurant, id) => {
     const isFavorited = restaurant.FavoritedUsers.map(d => d.id).includes(id)
     return isFavorited
+  },
+  getTopRestaurants: async (reqUser) => {
+    let restaurants = await Restaurant.findAll({
+      include: [
+        Category,
+        { model: User, as: 'FavoritedUsers' }
+      ]
+    })
+    restaurants = restaurants.map(r => ({
+      ...r.dataValues,
+      FavoritedCount: r.FavoritedUsers.length,
+      isFavorited: reqUser.FavoritedRestaurants.map(d => d.id).includes(r.id),
+      description: r.description.substring(0, 50),
+    }))
+    //取前十
+    const topRestaurants = restaurants.sort((a, b) => b.FavoritedCount - a.FavoritedCount).slice(0, 10)
+    return topRestaurants
   }
 }
-
 module.exports = restController
