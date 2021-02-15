@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const adminController = require('../controllers/adminController')
-const categoryController = require('../controllers/categoryController')
-const handleErrorAsync = require('../_helpers').handleErrorAsync
+const adminController = require('../../controllers/adminController')
+const categoryController = require('../../controllers/categoryController')
+const handleErrorAsync = require('../../_helpers').handleErrorAsync
 
 
 
