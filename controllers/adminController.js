@@ -31,6 +31,9 @@ const adminController = {
       const imgPromise = () => {
         return new Promise((resolve, reject) => {
           imgur.upload(file.path, (err, img) => {
+            if (err) {
+              return reject(err)
+            }
             return resolve(img.data.link)
           })
         })
@@ -38,7 +41,6 @@ const adminController = {
       async function start() {
         try {
           let imgLink = await imgPromise()
-          console.log(imgLink)
           Restaurant.create({
             name: name,
             tel: tel,
@@ -85,6 +87,9 @@ const adminController = {
       const imgPromise = () => {
         return new Promise((resolve, reject) => {
           imgur.upload(file.path, (err, img) => {
+            if (err) {
+              return reject(err)
+            }
             return resolve(img.data.link)
           })
         })
