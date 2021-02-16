@@ -56,9 +56,14 @@ router.post('/admin/categories', handleErrorAsync(async (req, res, next) => {
   await categoryController.postCategory(req.body)
   return res.json({ status: 'success', message: 'new category was created' })
 }))
-
+//編輯分類
 router.put('/admin/categories/:id', handleErrorAsync(async (req, res, next) => {
   const category = await categoryController.putCategory(req.params.id, req.body)
   return res.json({ status: 'success', message: 'category was successfully to update' })
+}))
+//刪除分類
+router.delete('/admin/categories/:id', handleErrorAsync(async (req, res, next) => {
+  await categoryController.deleteCategory(req.params.id)
+  return res.json({ status: 'success', message: 'category was successfully to delete' })
 }))
 module.exports = router
