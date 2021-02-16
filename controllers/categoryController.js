@@ -22,11 +22,11 @@ const categoryController = {
   },
   putCategory: async (id, body) => {
     const category = await Category.findByPk(id)
-    return category.update(body)
+    return await category.update(body)
   },
   deleteCategory: async (id) => {
     const category = await Category.findByPk(id)
-    return category.destroy()
+    return await category.destroy()
   }
 }
 

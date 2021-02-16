@@ -56,4 +56,9 @@ router.post('/admin/categories', handleErrorAsync(async (req, res, next) => {
   await categoryController.postCategory(req.body)
   return res.json({ status: 'success', message: 'new category was created' })
 }))
+
+router.put('/admin/categories/:id', handleErrorAsync(async (req, res, next) => {
+  const category = await categoryController.putCategory(req.params.id, req.body)
+  return res.json({ status: 'success', message: 'category was successfully to update' })
+}))
 module.exports = router
