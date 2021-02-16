@@ -27,7 +27,6 @@ router.get('/:id/edit', handleErrorAsync(async (req, res, next) => {
 }))
 
 router.put('/:id', upload.single('image'), handleErrorAsync(async (req, res, next) => {
-  console.log(req.body)
   if (!req.body.name) {
     req.flash('error_messages', "name didn't exist")
     return res.redirect('back')

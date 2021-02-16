@@ -21,7 +21,6 @@ const adminController = {
       nest: true,
       include: [Category]
     })
-    console.log(restaurants)
     return restaurants
   },
   //新增餐廳
@@ -78,7 +77,6 @@ const adminController = {
       async function start() {
         try {
           let imgLink = await imgPromise(file)
-          console.log(imgLink)
           restaurant.update({
             name: name,
             tel: tel,

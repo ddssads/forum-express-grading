@@ -97,8 +97,6 @@ router.post('/categories', handleErrorAsync(async (req, res, next) => {
 //單一分類頁面
 router.get('/categories/:id', handleErrorAsync(async (req, res, next) => {
   const { categories, category } = await categoryController.getCategories(req.params.id)
-  console.log(categories)
-  console.log('category', category)
   return res.render('admin/categories', { categories, category })
 }))
 //編輯單一分類

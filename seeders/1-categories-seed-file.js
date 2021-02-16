@@ -30,11 +30,9 @@ module.exports = {
      * await queryInterface.bulkDelete('People', null, {});
      */
     const { sequelize } = queryInterface;
-    console.log('sequelize', sequelize)
     try {
       await sequelize.transaction(async (transaction) => {
         const options = { transaction };
-        console.log('options', options)
         await sequelize.query("SET FOREIGN_KEY_CHECKS = 0", options);
         await sequelize.query("TRUNCATE TABLE Categories", options);
         await sequelize.query("SET FOREIGN_KEY_CHECKS = 1", options);

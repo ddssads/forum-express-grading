@@ -73,7 +73,6 @@ const userController = {
       async function start() {
         try {
           let imgLink = await imgPromise(file)
-          console.log(imgLink)
           user.update({
             name: body.name,
             image: imgLink
