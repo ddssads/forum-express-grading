@@ -38,4 +38,15 @@ router.delete('/admin/restaurants/:id', handleErrorAsync(async (req, res, next) 
   await adminController.deleteRestaurant(req.params.id)
   return res.json({ status: 'success', message: '' })
 }))
+
+//編輯餐廳資訊
+router.put('/admin/restaurants/:id', upload.single('image'), handleErrorAsync(async (req, res, next) => {
+  if (!req.body.name) {
+    return res.json({ status: 'error', message: 'name didn\'t exist' })
+  }
+  await adminController.putRestaurant(req.file, req.body, req.params.id)
+  req.flash('success_messages', 'restaurant was successfully to update')
+  return res.json({ status: 'success', message: 'restaurant was successfully to update' })
+
+}))
 module.exports = router
