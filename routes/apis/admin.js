@@ -45,8 +45,15 @@ router.put('/admin/restaurants/:id', upload.single('image'), handleErrorAsync(as
     return res.json({ status: 'error', message: 'name didn\'t exist' })
   }
   await adminController.putRestaurant(req.file, req.body, req.params.id)
-  req.flash('success_messages', 'restaurant was successfully to update')
   return res.json({ status: 'success', message: 'restaurant was successfully to update' })
+}))
 
+//新增分類
+router.post('/admin/categories', handleErrorAsync(async (req, res, next) => {
+  if (!req.body.name) {
+    return res.json({ status: 'error', message: 'name didn\'t exist' })
+  }
+  await categoryController.postCategory(req.body)
+  return res.json({ status: 'success', message: 'new category was created' })
 }))
 module.exports = router

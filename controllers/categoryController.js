@@ -15,7 +15,7 @@ const categoryController = {
   //新增一筆分類
   postCategory: async (body) => {
     const { name } = body
-    return Category.create({ name: name })
+    return await Category.create({ name: name })
       .catch((e) => {
         console.log(e)
       })
