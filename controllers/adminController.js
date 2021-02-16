@@ -9,6 +9,7 @@ const multer = require('multer')
 const { resolve } = require('path')
 const { rejects } = require('assert')
 const upload = multer({ dest: 'temp/' })
+const imgPromise = require('../_helpers').imgPromise
 const Restaurant = db.Restaurant
 const User = db.User
 const Category = db.Category
@@ -27,20 +28,9 @@ const adminController = {
     const { name, tel, address, opening_hours, description, categoryId } = body
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
-      //將upload寫成promise物件處理非同步
-      const imgPromise = () => {
-        return new Promise((resolve, reject) => {
-          imgur.upload(file.path, (err, img) => {
-            if (err) {
-              return reject(err)
-            }
-            return resolve(img.data.link)
-          })
-        })
-      }
       async function start() {
         try {
-          let imgLink = await imgPromise()
+          let imgLink = await imgPromise(file)
           Restaurant.create({
             name: name,
             tel: tel,
@@ -84,19 +74,9 @@ const adminController = {
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
       //將upload寫成promise物件處理非同步
-      const imgPromise = () => {
-        return new Promise((resolve, reject) => {
-          imgur.upload(file.path, (err, img) => {
-            if (err) {
-              return reject(err)
-            }
-            return resolve(img.data.link)
-          })
-        })
-      }
       async function start() {
         try {
-          let imgLink = await imgPromise()
+          let imgLink = await imgPromise(file)
           console.log(imgLink)
           restaurant.update({
             name: name,
@@ -152,5 +132,4 @@ const adminController = {
     }
   }
 }
-
 module.exports = adminController
