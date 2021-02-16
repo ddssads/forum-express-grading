@@ -13,6 +13,7 @@ const imgur = require('imgur-node-api')
 const router = require('../routes/comment')
 const { use } = require('../routes/comment')
 const restaurant = require('../models/restaurant')
+const imgPromise = require('../_helpers').imgPromise
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const userController = {
   //檢查email是否已經註冊
@@ -69,17 +70,9 @@ const userController = {
     const user = await User.findByPk(id)
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID)
-      //將upload寫成promise物件處理非同步
-      const imgPromise = () => {
-        return new Promise((resolve, reject) => {
-          imgur.upload(file.path, (err, img) => {
-            return resolve(img.data.link)
-          })
-        })
-      }
       async function start() {
         try {
-          let imgLink = await imgPromise()
+          let imgLink = await imgPromise(file)
           console.log(imgLink)
           user.update({
             name: body.name,
