@@ -23,4 +23,8 @@ router.get('/admin/categories', handleErrorAsync(async (req, res, next) => {
   return res.json({ categories })
 }))
 
+router.delete('/admin/restaurants/:id', handleErrorAsync(async (req, res, next) => {
+  await adminController.deleteRestaurant(req.params.id)
+  return res.json({ status: 'success', message: '' })
+}))
 module.exports = router
