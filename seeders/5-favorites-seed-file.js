@@ -13,7 +13,6 @@ module.exports = {
     */
     await queryInterface.bulkInsert('Favorites',
       Array.from({ length: 10 }).map((_, i) => ({
-        id: i + 1,
         UserId: Math.floor(Math.random() * 3) + 1,
         RestaurantId: Math.floor(Math.random() * 10) + 1,
         createdAt: new Date(),
@@ -29,6 +28,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    await queryInterface.bulkDelete('Favorites', null, {})
+    await queryInterface.bulkDelete('Favorites', null, { truncate: true })
   }
 };

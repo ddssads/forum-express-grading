@@ -21,6 +21,7 @@ const adminController = {
       nest: true,
       include: [Category]
     })
+    console.log(restaurants)
     return restaurants
   },
   //新增餐廳

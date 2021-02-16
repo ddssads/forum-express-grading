@@ -1,4 +1,3 @@
-const { useFakeServer } = require('sinon')
 const db = require('../models')
 const user = require('../models/user')
 const Category = db.Category
