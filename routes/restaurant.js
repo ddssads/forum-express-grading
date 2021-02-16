@@ -34,7 +34,8 @@ router.get('/:id', handleErrorAsync(async (req, res, next) => {
 router.get('/:id/dashboard', handleErrorAsync(async (req, res, next) => {
   const restaurant = await restController.getRestaurant(req.params.id)
   const totalCount = await restController.getTotalCountOfComment(req.params.id)
-  return res.render('dashboard', { restaurant, totalCount })
+  const totalFavoritedUsers = await restController.getTotalFavorited(restaurant)
+  return res.render('dashboard', { restaurant, totalCount, totalFavoritedUsers })
 }))
 
 

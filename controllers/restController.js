@@ -52,6 +52,11 @@ const restController = {
     })
     return restaurant.toJSON()
   },
+  //取單一餐廳被收藏總數
+  getTotalFavorited: async (restaurant) => {
+    const totalFavoritedUsers = restaurant.FavoritedUsers.length
+    return totalFavoritedUsers
+  },
   getFeeds: async () => {
     const restaurants = await Restaurant.findAll({
       limit: 10,
