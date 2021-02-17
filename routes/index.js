@@ -8,9 +8,11 @@ const restaurant = require('./restaurant')
 const favorite = require('./favorite')
 const like = require('./like')
 const following = require('./following')
+//api route
 const apiAdmin = require('./apis/admin')
 const apiHome = require('./apis/home')
 const apiUser = require('./apis/user')
+const apiRestaurant = require('./apis/restaurant')
 
 router.use('/admin', admin)
 router.use('/', home)
@@ -20,7 +22,9 @@ router.use('/restaurants', restaurant)
 router.use('/favorite', favorite)
 router.use('/like', like)
 router.use('/following', following)
+//api route
 router.use('/api/admin', apiAdmin)
+router.use('/api/restaurants', apiRestaurant)
 router.use('/api/users', apiUser)
 router.use('/api', apiHome)
 
