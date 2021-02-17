@@ -5,9 +5,9 @@ const upload = multer({ dest: 'temp/' })
 const adminController = require('../../controllers/adminController')
 const categoryController = require('../../controllers/categoryController')
 const handleErrorAsync = require('../../_helpers').handleErrorAsync
+const auth = require('../../middleware/auth')
 
-
-
+router.use(auth.apiAuthenticated, auth.apiAuthenticatedAdmin)
 router.get('/restaurants', handleErrorAsync(async (req, res, next) => {
   const restaurants = await adminController.getRestaurants()
   res.json({ restaurants })

@@ -1,10 +1,35 @@
 const passport = require('passport')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
 const Restaurant = db.Restaurant
 const Like = db.Like
+const jwt = require('jsonwebtoken')
+const passportJWT = require('passport-jwt')
+const ExtractJwt = passportJWT.ExtractJwt
+const JwtStrategy = passportJWT.Strategy
+
+let jwtOptions = {}
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
+jwtOptions.secretOrKey = process.env.JWT_SECRET
+
+let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
+  User.findByPk(jwt_payload.id, {
+    include: [
+      { model: db.Restaurant, as: 'FavoritedRestaurants' },
+      { model: db.Restaurant, as: 'LikedRestaurants' },
+      { model: User, as: 'Followings' },
+      { model: User, as: 'Followers' }
+    ]
+  }).then(user => {
+    if (!user) return next(null, false)
+    return next(null, user)
+  })
+})
 
 module.exports = app => {
   app.use(passport.initialize())
@@ -28,6 +53,8 @@ module.exports = app => {
       })
     }
   ))
+
+  passport.use(strategy)
 
   passport.serializeUser((user, cb) => {
     cb(null, user.id)
