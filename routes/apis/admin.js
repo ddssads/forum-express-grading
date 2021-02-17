@@ -8,6 +8,7 @@ const handleErrorAsync = require('../../_helpers').handleErrorAsync
 const auth = require('../../middleware/auth')
 
 router.use(auth.apiAuthenticated, auth.apiAuthenticatedAdmin)
+//取得所有餐廳資訊
 router.get('/restaurants', handleErrorAsync(async (req, res, next) => {
   const restaurants = await adminController.getRestaurants()
   res.json({ restaurants })
@@ -28,12 +29,13 @@ router.post('/restaurants', upload.single('image'), handleErrorAsync(async (req,
   return res.json({ status: 'success', message: 'restaurant was successfully created' })
 }))
 
-//顯示分類頁面
+//取得分類資訊
 router.get('/categories', handleErrorAsync(async (req, res, next) => {
   const categories = await categoryController.getCategories()
   return res.json({ categories })
 }))
 
+//刪除餐廳
 router.delete('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
   await adminController.deleteRestaurant(req.params.id)
   return res.json({ status: 'success', message: '' })
@@ -66,4 +68,16 @@ router.delete('/categories/:id', handleErrorAsync(async (req, res, next) => {
   await categoryController.deleteCategory(req.params.id)
   return res.json({ status: 'success', message: 'category was successfully to delete' })
 }))
+//取得用戶資訊
+router.get('/users', handleErrorAsync(async (req, res, next) => {
+  const users = await adminController.getUsers()
+  return res.json({ users })
+}))
+
+//修改用戶權限
+router.put('/users/:id/toggleAdmin', handleErrorAsync(async (req, res, next) => {
+  const user = await adminController.toggleAdmin(req.params.id)
+  return res.json({ status: 'success', message: 'successfully to change' })
+}))
+
 module.exports = router
