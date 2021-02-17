@@ -15,7 +15,41 @@ const { use } = require('../routes/comment')
 const restaurant = require('../models/restaurant')
 const imgPromise = require('../_helpers').imgPromise
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
+//jwt
+const jwt = require('jsonwebtoken')
+const passportJWT = require('passport-jwt')
+const ExtractJWT = passportJWT.ExtractJwt
+const JwtStrategy = passportJWT.Strategy
+
 const userController = {
+  //sign in by token
+  signIn: async (body, res) => {
+    if (!body.email || !body.password) {
+      return res.json({ status: 'error', message: 'required fields didn\'t exist' })
+    }
+    //檢查信箱密碼
+    let username = body.email
+    let password = body.password
+    const user = await User.findOne({ where: { email: username } })
+    if (!user) {
+      return res.status(401).json({ status: 'error', message: 'no such user found' })
+    }
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      return res.status(401).json({ status: 'error', message: 'passwords did not match' })
+    }
+    //簽發token
+    var payload = { id: user.id }
+    var token = jwt.sign(payload, process.env.JWT_SECRET)
+    return res.json(({
+      status: 'success',
+      message: 'ok',
+      token: token,
+      user: {
+        id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin
+      }
+    }))
+  },
   //檢查email是否已經註冊
   checkUser: async (email) => {
     try {

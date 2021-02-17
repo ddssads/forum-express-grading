@@ -8,19 +8,19 @@ const handleErrorAsync = require('../../_helpers').handleErrorAsync
 
 
 
-router.get('/admin/restaurants', handleErrorAsync(async (req, res, next) => {
+router.get('/restaurants', handleErrorAsync(async (req, res, next) => {
   const restaurants = await adminController.getRestaurants()
   res.json({ restaurants })
 }))
 
 //瀏覽單一餐廳資訊
-router.get('/admin/restaurants/:id', handleErrorAsync(async (req, res, next) => {
+router.get('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
   const restaurant = await adminController.getRestaurant(req.params.id)
   res.json({ restaurant })
 }))
 
 //新增餐廳
-router.post('/admin/restaurants', upload.single('image'), handleErrorAsync(async (req, res, next) => {
+router.post('/restaurants', upload.single('image'), handleErrorAsync(async (req, res, next) => {
   if (!req.body.name) {
     return res.json({ status: 'error', message: 'name didn\'t exist' })
   }
@@ -29,18 +29,18 @@ router.post('/admin/restaurants', upload.single('image'), handleErrorAsync(async
 }))
 
 //顯示分類頁面
-router.get('/admin/categories', handleErrorAsync(async (req, res, next) => {
+router.get('/categories', handleErrorAsync(async (req, res, next) => {
   const categories = await categoryController.getCategories()
   return res.json({ categories })
 }))
 
-router.delete('/admin/restaurants/:id', handleErrorAsync(async (req, res, next) => {
+router.delete('/restaurants/:id', handleErrorAsync(async (req, res, next) => {
   await adminController.deleteRestaurant(req.params.id)
   return res.json({ status: 'success', message: '' })
 }))
 
 //編輯餐廳資訊
-router.put('/admin/restaurants/:id', upload.single('image'), handleErrorAsync(async (req, res, next) => {
+router.put('/restaurants/:id', upload.single('image'), handleErrorAsync(async (req, res, next) => {
   if (!req.body.name) {
     return res.json({ status: 'error', message: 'name didn\'t exist' })
   }
@@ -49,7 +49,7 @@ router.put('/admin/restaurants/:id', upload.single('image'), handleErrorAsync(as
 }))
 
 //新增分類
-router.post('/admin/categories', handleErrorAsync(async (req, res, next) => {
+router.post('/categories', handleErrorAsync(async (req, res, next) => {
   if (!req.body.name) {
     return res.json({ status: 'error', message: 'name didn\'t exist' })
   }
@@ -57,12 +57,12 @@ router.post('/admin/categories', handleErrorAsync(async (req, res, next) => {
   return res.json({ status: 'success', message: 'new category was created' })
 }))
 //編輯分類
-router.put('/admin/categories/:id', handleErrorAsync(async (req, res, next) => {
+router.put('/categories/:id', handleErrorAsync(async (req, res, next) => {
   const category = await categoryController.putCategory(req.params.id, req.body)
   return res.json({ status: 'success', message: 'category was successfully to update' })
 }))
 //刪除分類
-router.delete('/admin/categories/:id', handleErrorAsync(async (req, res, next) => {
+router.delete('/categories/:id', handleErrorAsync(async (req, res, next) => {
   await categoryController.deleteCategory(req.params.id)
   return res.json({ status: 'success', message: 'category was successfully to delete' })
 }))

@@ -30,6 +30,8 @@ router.post('/signup', handleErrorAsync(async (req, res, next) => {
 router.get('/signin', (req, res) => {
   return res.render('signin')
 })
+
+
 router.post('/signin', passport.authenticate('local', {
   successRedirect: '/restaurants',
   failureRedirect: '/signin',
