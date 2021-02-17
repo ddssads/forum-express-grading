@@ -14,6 +14,9 @@ const apiHome = require('./apis/home')
 const apiUser = require('./apis/user')
 const apiRestaurant = require('./apis/restaurant')
 const apiComment = require('./apis/comment')
+const apiFavorite = require('./apis/favorite')
+const apiFollowing = require('./apis/following')
+const apiLike = require('./apis/like')
 
 router.use('/admin', admin)
 router.use('/', home)
@@ -28,7 +31,9 @@ router.use('/api/admin', apiAdmin)
 router.use('/api/restaurants', apiRestaurant)
 router.use('/api/users', apiUser)
 router.use('/api/comments', apiComment)
-
+router.use('/api/favorite', apiFavorite)
+router.use('/api/following', apiFollowing)
+router.use('/api/like', apiLike)
 router.use('/api', apiHome)
 
 module.exports = router
