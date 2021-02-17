@@ -10,6 +10,7 @@ const like = require('./like')
 const following = require('./following')
 const apiAdmin = require('./apis/admin')
 const apiHome = require('./apis/home')
+const apiUser = require('./apis/user')
 
 router.use('/admin', admin)
 router.use('/', home)
@@ -20,6 +21,7 @@ router.use('/favorite', favorite)
 router.use('/like', like)
 router.use('/following', following)
 router.use('/api/admin', apiAdmin)
+router.use('/api/users', apiUser)
 router.use('/api', apiHome)
 
 module.exports = router
