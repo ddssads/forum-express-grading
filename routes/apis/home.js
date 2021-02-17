@@ -6,7 +6,11 @@ const auth = require('../../middleware/auth')
 const handleErrorAsync = require('../../_helpers').handleErrorAsync
 
 router.post('/signin', handleErrorAsync(async (req, res, next) => {
-  await userController.signIn(req.body, res)
+  const result = await userController.signIn(req.body, res)
+  if (result.status === 'error') {
+    return res.status(401).json(result)
+  }
+  return res.json(result)
 }))
 
 module.exports = router

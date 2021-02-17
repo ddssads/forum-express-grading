@@ -23,25 +23,25 @@ const JwtStrategy = passportJWT.Strategy
 
 const userController = {
   //sign in by token
-  signIn: async (body, res) => {
+  signIn: async (body) => {
     if (!body.email || !body.password) {
-      return res.json({ status: 'error', message: 'required fields didn\'t exist' })
+      return ({ status: 'error', message: 'required fields didn\'t exist' })
     }
     //檢查信箱密碼
     let username = body.email
     let password = body.password
     const user = await User.findOne({ where: { email: username } })
     if (!user) {
-      return res.status(401).json({ status: 'error', message: 'no such user found' })
+      return ({ status: 'error', message: 'no such user found' })
     }
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
-      return res.status(401).json({ status: 'error', message: 'passwords did not match' })
+      return ({ status: 'error', message: 'passwords did not match' })
     }
     //簽發token
     var payload = { id: user.id }
     var token = jwt.sign(payload, process.env.JWT_SECRET)
-    return res.json(({
+    return (({
       status: 'success',
       message: 'ok',
       token: token,
